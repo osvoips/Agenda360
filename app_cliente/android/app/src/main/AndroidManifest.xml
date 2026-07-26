@@ -1,4 +1,8 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
+    <!-- debug/profile AndroidManifest.xml já têm isso (o Flutter tooling
+         adiciona pra hot reload), mas o manifesto de release (este aqui)
+         não tem por padrão — sem isso o app não acessa rede nenhuma. -->
+    <uses-permission android:name="android.permission.INTERNET" />
     <application
         android:label="agenda360_cliente"
         android:name="${applicationName}"
