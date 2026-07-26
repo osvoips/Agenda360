@@ -115,6 +115,8 @@ Entidades centrais, já pensadas para múltiplos segmentos além de barbearia:
   reaproveitado entre agendamentos futuros pelo mesmo número.
 - `promotion` — regras promocionais por tenant/serviço (v1 simples: só
   cadastro, sem motor de regras complexo).
+- `staff_user` — login da Barbearia/Administrador (papéis `staff` e
+  `admin`); o cliente final nunca usa esta entidade.
 
 Esse modelo já comporta "Salão de Beleza" ou "Clínica de Estética" trocando
 apenas o conteúdo de `service` e o rótulo de `professional`, sem mudança de
@@ -171,9 +173,10 @@ agenda360/
 ## 7. Decisões em Aberto
 
 - [x] Backend: **FastAPI** (§5.1).
-- [ ] Autenticação do cliente final: token de sessão por telefone (com
-      verificação via SMS/WhatsApp?) ou apenas nome+telefone sem
-      verificação na v1 (mais simples, risco de dados falsos).
+- [x] Autenticação do cliente final: **nome + telefone, sem verificação**
+      na v1 (RF-CLI-07). O cliente é identificado por `(tenant_id,
+      phone)`; SMS/WhatsApp de verificação fica para quando o volume
+      justificar o atrito extra no fluxo de 30 segundos.
 - [ ] Estratégia de resolução de tenant no app Flutter: build flavors
       (1 build por cliente) vs. runtime config (1 build, config remota).
 - [ ] Estrutura de cobrança do modelo White Label (mensalidade por tenant,

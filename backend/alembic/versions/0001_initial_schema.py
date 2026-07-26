@@ -1,13 +1,26 @@
--- Agenda360 — schema inicial (multi-tenant, shared schema + RLS)
--- Ver docs/DATABASE.md para o racional de cada decisão.
--- PostgreSQL 14+.
+"""Initial schema
 
-CREATE EXTENSION IF NOT EXISTS "pgcrypto";   -- gen_random_uuid()
-CREATE EXTENSION IF NOT EXISTS "btree_gist"; -- EXCLUDE USING gist com uuid/timestamptz
+Revision ID: 0001
+Revises:
+Create Date: 2026-07-25
 
--- =========================================================================
--- tenants
--- =========================================================================
+O DDL abaixo é o mesmo de database/schema.sql (fonte da verdade legível por
+humanos — ver docs/DATABASE.md). Mantenha os dois em sincronia manualmente:
+o autogenerate do Alembic não modela RLS policies nem EXCLUDE USING gist.
+"""
+from typing import Sequence, Union
+
+from alembic import op
+
+revision: str = "0001"
+down_revision: Union[str, None] = None
+branch_labels: Union[str, Sequence[str], None] = None
+depends_on: Union[str, Sequence[str], None] = None
+
+UPGRADE_SQL = """
+CREATE EXTENSION IF NOT EXISTS "pgcrypto";
+CREATE EXTENSION IF NOT EXISTS "btree_gist";
+
 CREATE TABLE tenants (
     id                        uuid PRIMARY KEY DEFAULT gen_random_uuid(),
     slug                      text NOT NULL UNIQUE,
@@ -28,9 +41,6 @@ CREATE TABLE tenant_branding (
     secondary_color text
 );
 
--- =========================================================================
--- staff_users (login da Barbearia/Administrador)
--- =========================================================================
 CREATE TABLE staff_users (
     id             uuid PRIMARY KEY DEFAULT gen_random_uuid(),
     tenant_id      uuid NOT NULL REFERENCES tenants(id) ON DELETE CASCADE,
@@ -46,9 +56,6 @@ CREATE TABLE staff_users (
 
 CREATE INDEX idx_staff_users_tenant ON staff_users(tenant_id);
 
--- =========================================================================
--- professionals
--- =========================================================================
 CREATE TABLE professionals (
     id          uuid PRIMARY KEY DEFAULT gen_random_uuid(),
     tenant_id   uuid NOT NULL REFERENCES tenants(id) ON DELETE CASCADE,
@@ -61,9 +68,6 @@ CREATE TABLE professionals (
 
 CREATE INDEX idx_professionals_tenant ON professionals(tenant_id);
 
--- =========================================================================
--- services
--- =========================================================================
 CREATE TABLE services (
     id                uuid PRIMARY KEY DEFAULT gen_random_uuid(),
     tenant_id         uuid NOT NULL REFERENCES tenants(id) ON DELETE CASCADE,
@@ -77,9 +81,6 @@ CREATE TABLE services (
 
 CREATE INDEX idx_services_tenant ON services(tenant_id);
 
--- =========================================================================
--- professional_services (N:N)
--- =========================================================================
 CREATE TABLE professional_services (
     tenant_id        uuid NOT NULL REFERENCES tenants(id) ON DELETE CASCADE,
     professional_id  uuid NOT NULL REFERENCES professionals(id) ON DELETE CASCADE,
@@ -89,9 +90,6 @@ CREATE TABLE professional_services (
 
 CREATE INDEX idx_professional_services_tenant ON professional_services(tenant_id);
 
--- =========================================================================
--- business_hours
--- =========================================================================
 CREATE TABLE business_hours (
     tenant_id   uuid NOT NULL REFERENCES tenants(id) ON DELETE CASCADE,
     weekday     smallint NOT NULL CHECK (weekday BETWEEN 0 AND 6),
@@ -102,9 +100,6 @@ CREATE TABLE business_hours (
     CHECK (is_closed OR (opens_at IS NOT NULL AND closes_at IS NOT NULL AND opens_at < closes_at))
 );
 
--- =========================================================================
--- blocked_slots
--- =========================================================================
 CREATE TABLE blocked_slots (
     id               uuid PRIMARY KEY DEFAULT gen_random_uuid(),
     tenant_id        uuid NOT NULL REFERENCES tenants(id) ON DELETE CASCADE,
@@ -119,9 +114,6 @@ CREATE TABLE blocked_slots (
 CREATE INDEX idx_blocked_slots_tenant_professional
     ON blocked_slots(tenant_id, professional_id, starts_at);
 
--- =========================================================================
--- clients
--- =========================================================================
 CREATE TABLE clients (
     id          uuid PRIMARY KEY DEFAULT gen_random_uuid(),
     tenant_id   uuid NOT NULL REFERENCES tenants(id) ON DELETE CASCADE,
@@ -132,9 +124,6 @@ CREATE TABLE clients (
     CONSTRAINT uq_clients_tenant_phone UNIQUE (tenant_id, phone)
 );
 
--- =========================================================================
--- appointments
--- =========================================================================
 CREATE TABLE appointments (
     id               uuid PRIMARY KEY DEFAULT gen_random_uuid(),
     tenant_id        uuid NOT NULL REFERENCES tenants(id) ON DELETE CASCADE,
@@ -150,8 +139,6 @@ CREATE TABLE appointments (
     created_at       timestamptz NOT NULL DEFAULT now(),
     updated_at       timestamptz NOT NULL DEFAULT now(),
     CHECK (starts_at < ends_at),
-    -- Impede overlap de horários para o mesmo profissional, mesmo sob concorrência.
-    -- Agendamentos cancelados não contam para a exclusão.
     EXCLUDE USING gist (
         professional_id WITH =,
         tstzrange(starts_at, ends_at) WITH &&
@@ -163,9 +150,6 @@ CREATE INDEX idx_appointments_tenant_professional_starts
 CREATE INDEX idx_appointments_tenant_client
     ON appointments(tenant_id, client_id);
 
--- =========================================================================
--- promotions
--- =========================================================================
 CREATE TABLE promotions (
     id              uuid PRIMARY KEY DEFAULT gen_random_uuid(),
     tenant_id       uuid NOT NULL REFERENCES tenants(id) ON DELETE CASCADE,
@@ -183,12 +167,6 @@ CREATE TABLE promotions (
 
 CREATE INDEX idx_promotions_tenant_service ON promotions(tenant_id, service_id);
 
--- =========================================================================
--- Row-Level Security
--- =========================================================================
--- O backend deve executar, no início de cada transação:
---   SET LOCAL app.tenant_id = '<uuid-do-tenant-resolvido>';
-
 ALTER TABLE tenants                ENABLE ROW LEVEL SECURITY;
 ALTER TABLE tenant_branding        ENABLE ROW LEVEL SECURITY;
 ALTER TABLE staff_users            ENABLE ROW LEVEL SECURITY;
@@ -201,10 +179,6 @@ ALTER TABLE clients                ENABLE ROW LEVEL SECURITY;
 ALTER TABLE appointments           ENABLE ROW LEVEL SECURITY;
 ALTER TABLE promotions             ENABLE ROW LEVEL SECURITY;
 
--- tenants é a exceção: a própria resolução de tenant por slug (antes de
--- qualquer autenticação, ver docs/DATABASE.md §5) precisa poder ler a
--- tabela sem `app.tenant_id` ainda definido. Leitura é pública (slug/nome/
--- branding não são dados sensíveis); escrita continua restrita ao tenant.
 CREATE POLICY tenant_read ON tenants
     FOR SELECT USING (true);
 CREATE POLICY tenant_update ON tenants
@@ -231,25 +205,42 @@ CREATE POLICY tenant_isolation ON appointments
 CREATE POLICY tenant_isolation ON promotions
     USING (tenant_id = current_setting('app.tenant_id', true)::uuid);
 
--- =========================================================================
--- Role de aplicação
--- =========================================================================
--- No PostgreSQL, o dono de uma tabela ignora RLS por padrão. Como as
--- migrations rodam como o usuário "dono" do schema, a API precisa se
--- conectar com uma role separada, sem privilégio de dono, para que as
--- policies acima realmente sejam aplicadas. Migrations/seed continuam
--- usando a role dona (bypass natural do RLS é aceitável para elas).
---
--- ATENÇÃO: senha de desenvolvimento — trocar antes de qualquer deploy real.
-DO $$
+DO $do$
 BEGIN
     IF NOT EXISTS (SELECT FROM pg_catalog.pg_roles WHERE rolname = 'agenda360_app') THEN
         CREATE ROLE agenda360_app LOGIN PASSWORD 'agenda360_app';
     END IF;
 END
-$$;
+$do$;
 
 GRANT USAGE ON SCHEMA public TO agenda360_app;
 GRANT SELECT, INSERT, UPDATE, DELETE ON ALL TABLES IN SCHEMA public TO agenda360_app;
 ALTER DEFAULT PRIVILEGES IN SCHEMA public
     GRANT SELECT, INSERT, UPDATE, DELETE ON TABLES TO agenda360_app;
+"""
+
+DOWNGRADE_SQL = """
+REVOKE ALL ON ALL TABLES IN SCHEMA public FROM agenda360_app;
+REVOKE USAGE ON SCHEMA public FROM agenda360_app;
+DROP ROLE IF EXISTS agenda360_app;
+
+DROP TABLE IF EXISTS promotions CASCADE;
+DROP TABLE IF EXISTS appointments CASCADE;
+DROP TABLE IF EXISTS clients CASCADE;
+DROP TABLE IF EXISTS blocked_slots CASCADE;
+DROP TABLE IF EXISTS business_hours CASCADE;
+DROP TABLE IF EXISTS professional_services CASCADE;
+DROP TABLE IF EXISTS services CASCADE;
+DROP TABLE IF EXISTS professionals CASCADE;
+DROP TABLE IF EXISTS staff_users CASCADE;
+DROP TABLE IF EXISTS tenant_branding CASCADE;
+DROP TABLE IF EXISTS tenants CASCADE;
+"""
+
+
+def upgrade() -> None:
+    op.execute(UPGRADE_SQL)
+
+
+def downgrade() -> None:
+    op.execute(DOWNGRADE_SQL)

@@ -130,10 +130,13 @@ agenda360/
 - [docs/prototypes/screens.html](docs/prototypes/screens.html) — protótipo
   navegável do App Cliente, Painel da Barbearia e Painel Administrador
   (abrir no navegador)
+- [backend/README.md](backend/README.md) — como rodar a API localmente
 
 ## Status
 
-Documentação técnica inicial concluída (README, arquitetura, requisitos,
-roadmap), modelagem do banco de dados definida e protótipos de tela prontos.
-Ainda sem código de backend/apps — próximo passo: decidir os detalhes
-técnicos pendentes (ARCHITECTURE.md §7) e iniciar a implementação.
+Documentação técnica completa, banco de dados modelado, protótipos de
+tela prontos e **backend (FastAPI) do MVP implementado** — cobre os três
+atores do `REQUIREMENTS.md` (Cliente, Barbearia, Administrador). Falta
+rodar as migrations e os testes numa máquina com Docker (não disponível no
+ambiente onde o backend foi escrito) e começar os apps Flutter (cliente e
+painel admin), que vão consumir essa API.

@@ -1,0 +1,33 @@
+services:
+  db:
+    image: postgres:16
+    environment:
+      POSTGRES_DB: agenda360
+      POSTGRES_USER: agenda360
+      POSTGRES_PASSWORD: agenda360
+    ports:
+      - "5432:5432"
+    volumes:
+      - agenda360_pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U agenda360 -d agenda360"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  api:
+    build:
+      context: ../backend
+    environment:
+      DATABASE_URL: postgresql+asyncpg://agenda360_app:agenda360_app@db:5432/agenda360
+      ADMIN_DATABASE_URL: postgresql+asyncpg://agenda360:agenda360@db:5432/agenda360
+    ports:
+      - "8000:8000"
+    depends_on:
+      db:
+        condition: service_healthy
+    volumes:
+      - ../backend:/srv
+
+volumes:
+  agenda360_pgdata:

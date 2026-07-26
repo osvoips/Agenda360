@@ -17,20 +17,26 @@ Planejamento e documentação técnica antes de qualquer código.
 - [x] Protótipos de tela (app cliente + painel admin) — ver
       [`docs/prototypes/screens.html`](prototypes/screens.html) (abrir no
       navegador).
-- [ ] Decisões técnicas restantes: verificação de telefone, resolução de
-      tenant no Flutter (build flavor vs. runtime config).
+- [x] Decisões técnicas restantes: verificação de telefone (§7 de
+      ARCHITECTURE.md, resolvido — sem verificação na v1). Resolução de
+      tenant no Flutter (build flavor vs. runtime config) segue em aberto,
+      só é bloqueante quando o app cliente for iniciado.
 
 ## Fase 1 — MVP com Carioca Barbearia
 
 Objetivo: validar o produto em uso real com o cliente piloto.
 
-- Backend FastAPI com autenticação por tenant e RLS no PostgreSQL.
-- App Cliente (Flutter): fluxo completo de agendamento sem cadastro,
+- [x] **Backend FastAPI** com autenticação por tenant e RLS no PostgreSQL
+      — ver [`backend/`](../backend/README.md). Cobre RF-CLI-01 a 08,
+      RF-BAR-01 a 06 e RF-ADM-01 a 06. Testado apenas por `py_compile`
+      neste ambiente (sem Docker/Postgres disponíveis) — falta rodar de
+      verdade (`alembic upgrade head` + `pytest`) numa máquina com Docker.
+- [ ] App Cliente (Flutter): fluxo completo de agendamento sem cadastro,
   conforme `REQUIREMENTS.md` §1.
-- Painel da Barbearia: agenda do dia/semana, confirmação/cancelamento,
-  bloqueio de horários.
-- Painel Administrativo: cadastro de barbeiros, serviços, horários,
-  promoções.
+- [ ] Painel da Barbearia: agenda do dia/semana, confirmação/cancelamento,
+  bloqueio de horários (endpoints prontos no backend, falta o app Flutter).
+- [ ] Painel Administrativo: cadastro de barbeiros, serviços, horários,
+  promoções (idem — endpoints prontos, falta o app Flutter).
 - White Label aplicado apenas ao tenant Carioca Barbearia (1 build).
 - Pagamento presencial (fora do app).
 - **Critério de saída:** Carioca Barbearia usando o app no dia a dia por
