@@ -14,7 +14,9 @@ Planejamento e documentação técnica antes de qualquer código.
 - [x] Modelagem do banco de dados (schema multi-tenant, entidades §4 de
       ARCHITECTURE.md) — ver [DATABASE.md](DATABASE.md) e
       [`database/schema.sql`](../database/schema.sql).
-- [ ] Protótipos de tela (app cliente + painel admin).
+- [x] Protótipos de tela (app cliente + painel admin) — ver
+      [`docs/prototypes/screens.html`](prototypes/screens.html) (abrir no
+      navegador).
 - [ ] Decisões técnicas restantes: verificação de telefone, resolução de
       tenant no Flutter (build flavor vs. runtime config).
 

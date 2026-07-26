@@ -127,9 +127,13 @@ agenda360/
   de segmentos e IA
 - [docs/DATABASE.md](docs/DATABASE.md) — modelagem do banco de dados
   (entidades, relacionamentos, RLS) e [`database/schema.sql`](database/schema.sql)
+- [docs/prototypes/screens.html](docs/prototypes/screens.html) — protótipo
+  navegável do App Cliente, Painel da Barbearia e Painel Administrador
+  (abrir no navegador)
 
 ## Status
 
 Documentação técnica inicial concluída (README, arquitetura, requisitos,
-roadmap) e modelagem do banco de dados definida. Ainda sem código de
-backend/apps — próximo passo: protótipos de tela.
+roadmap), modelagem do banco de dados definida e protótipos de tela prontos.
+Ainda sem código de backend/apps — próximo passo: decidir os detalhes
+técnicos pendentes (ARCHITECTURE.md §7) e iniciar a implementação.
