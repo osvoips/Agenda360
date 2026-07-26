@@ -36,20 +36,19 @@ Objetivo: validar o produto em uso real com o cliente piloto.
       corrigidos.
 - [x] **App Cliente (Flutter)**: fluxo completo de agendamento sem
   cadastro, conforme `REQUIREMENTS.md` §1 — ver
-  [`app_cliente/`](../app_cliente/README.md). Escrito e revisado à mão
-  (sem SDK do Flutter disponível neste ambiente) — falta gerar as pastas
-  nativas (`flutter create .`) e rodar `flutter analyze`/`flutter run`
-  numa máquina com o Flutter instalado.
+  [`app_cliente/`](../app_cliente/README.md). **Validado**: `flutter
+  create` + `flutter analyze` (zero problemas) + rodando de verdade
+  (`flutter run -d web-server`) contra o backend real.
 - [x] **Painel da Barbearia/Administrador (Flutter)**: agenda do
   dia/semana, confirmação/cancelamento, bloqueio de horários,
   configuração de horário de funcionamento, e cadastro de
   profissionais/serviços/promoções — um único app (`app_admin/`) para os
   dois papéis, ver [`app_admin/README.md`](../app_admin/README.md).
-  Mesma ressalva do App Cliente: escrito e revisado à mão, falta
-  `flutter create`/`flutter analyze`/`flutter run` numa máquina com o
-  Flutter instalado. Um endpoint novo (`GET
-  /v1/barbershop/professionals`) foi adicionado ao backend durante esta
-  etapa para dar suporte ao bloqueio de horário.
+  **Validado** como o App Cliente (`flutter create`/`analyze`/`run`).
+  Um endpoint novo (`GET /v1/barbershop/professionals`) foi adicionado
+  ao backend durante esta etapa para dar suporte ao bloqueio de horário,
+  e um CORS ausente no backend (bloqueava qualquer chamada do Flutter
+  Web) foi corrigido — sem isso nenhum dos dois apps funcionaria na web.
 - White Label aplicado apenas ao tenant Carioca Barbearia (1 build).
 - Pagamento presencial (fora do app).
 - **Critério de saída:** Carioca Barbearia usando o app no dia a dia por

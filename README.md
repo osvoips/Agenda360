@@ -138,14 +138,21 @@ agenda360/
 
 ## Status
 
-**Fase 1 (MVP) completa no código, backend validado de ponta a ponta.**
-Backend (FastAPI), App Cliente (Flutter) e Painel da Barbearia/
-Administrador (Flutter) — os três pedaços previstos em
-`docs/ROADMAP.md` — estão implementados, cobrindo todos os requisitos de
-`docs/REQUIREMENTS.md`. O backend já rodou de verdade (Docker, migrations,
-seed, todos os endpoints testados via curl, `pytest` 10/10 passando) —
-três bugs reais só apareceram nessa validação (ver
-`docs/ROADMAP.md`/histórico do git), todos corrigidos. Os dois apps
-Flutter ainda não rodaram (SDK do Flutter em instalação); depois de
-instalado, falta `flutter create` + `flutter pub get` + `flutter analyze`
-em `app_cliente/` e `app_admin/`.
+**Fase 1 (MVP) completa e validada de ponta a ponta.** Backend
+(FastAPI), App Cliente (Flutter) e Painel da Barbearia/Administrador
+(Flutter) — os três pedaços de `docs/ROADMAP.md` — estão implementados
+e rodando de verdade, cobrindo todos os requisitos de
+`docs/REQUIREMENTS.md`:
+
+- **Backend**: Docker, migrations, seed, todos os endpoints testados via
+  curl, `pytest` 10/10 passando.
+- **App Cliente / Painel Admin**: `flutter analyze` sem nenhum problema
+  nos dois, e ambos rodando de verdade (`flutter run -d web-server`)
+  contra o backend real.
+
+Vários bugs reais só apareceram nessa validação (passlib incompatível
+com bcrypt novo, host de teste fixo, event loop de teste errado, CORS
+ausente bloqueando o Flutter Web) — todos corrigidos, ver o histórico do
+git. Falta só o teste interativo manual (clicar no fluxo completo) numa
+janela de navegador de verdade — o ambiente onde isso foi validado não
+conseguiu tirar screenshot do Browser pane para confirmar visualmente.
