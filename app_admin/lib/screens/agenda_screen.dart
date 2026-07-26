@@ -278,7 +278,7 @@ class _AppointmentCardState extends State<_AppointmentCard> {
         ],
       ),
     );
-    if (reason == null) return;
+    if (reason == null || !mounted) return;
 
     setState(() => _busy = true);
     try {
@@ -556,7 +556,7 @@ class _BlockSlotDialogState extends State<_BlockSlotDialog> {
               const Text('Nenhum profissional cadastrado.')
             else
               DropdownButtonFormField<Professional>(
-                value: _professional,
+                initialValue: _professional,
                 decoration: const InputDecoration(labelText: 'Profissional'),
                 items: [
                   for (final professional in widget.professionals)

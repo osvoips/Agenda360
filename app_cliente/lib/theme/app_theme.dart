@@ -105,7 +105,7 @@ class AppTheme {
         ),
       ),
       textButtonTheme: TextButtonThemeData(
-        style: TextButton.styleFrom(foregroundColor: ink.withOpacity(0.7)),
+        style: TextButton.styleFrom(foregroundColor: ink.withValues(alpha: 0.7)),
       ),
       inputDecorationTheme: InputDecorationTheme(
         filled: true,

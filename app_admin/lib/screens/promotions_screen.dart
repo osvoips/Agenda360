@@ -25,7 +25,7 @@ class _PromotionsScreenState extends State<PromotionsScreen> {
   Future<void> _openDialog({Promotion? existing}) async {
     final api = context.read<AuthController>().api;
     final services = await api.getServices();
-    if (!context.mounted) return;
+    if (!mounted) return;
     if (services.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('Cadastre um serviço antes de criar uma promoção.')),
@@ -219,7 +219,7 @@ class _PromotionDialogState extends State<_PromotionDialog> {
           children: [
             if (!_isEditing)
               DropdownButtonFormField<Service>(
-                value: _service,
+                initialValue: _service,
                 decoration: const InputDecoration(labelText: 'Serviço'),
                 items: [
                   for (final service in widget.services)
@@ -242,7 +242,7 @@ class _PromotionDialogState extends State<_PromotionDialog> {
             ),
             const SizedBox(height: 12),
             DropdownButtonFormField<String>(
-              value: _discountType,
+              initialValue: _discountType,
               decoration: const InputDecoration(labelText: 'Tipo de desconto'),
               items: const [
                 DropdownMenuItem(value: 'percentage', child: Text('Percentual (%)')),
