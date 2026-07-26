@@ -1,4 +1,5 @@
 from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
 
 from app.api.admin_routes import router as admin_router
 from app.api.auth_routes import router as auth_router
@@ -7,6 +8,19 @@ from app.api.barbershop_routes import router as barbershop_router
 from app.api.client_routes import router as client_router
 
 app = FastAPI(title="Agenda360 API", version="0.1.0")
+
+# App Cliente/Painel rodam em Flutter Web também (RNF-05), então o navegador
+# faz preflight CORS antes de qualquer request cross-origin. Sem cookies
+# envolvidos (autenticação é Bearer token no header), liberar qualquer
+# origem não abre brecha de credencial — allow_credentials fica False de
+# propósito, já que o spec de CORS proíbe combinar `*` com credentials.
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_credentials=False,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 app.include_router(client_router)
 app.include_router(auth_router)
