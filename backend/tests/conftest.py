@@ -9,10 +9,25 @@ import os
 import uuid
 from pathlib import Path
 
+
+def _with_test_db(url: str) -> str:
+    """Troca só o nome do banco por `agenda360_test`, preservando host/porta/
+    credenciais — dentro do container da API isso é `db` (rede do
+    docker-compose), fora dele costuma ser `localhost`. Fixar `localhost`
+    aqui quebraria ao rodar via `docker compose exec api pytest`."""
+    base = url.rsplit("/", 1)[0]
+    return f"{base}/agenda360_test"
+
+
 # Precisa ser definido antes de qualquer `from app...` — app.core.db abre o
-# engine no import, usando get_settings() (lru_cache).
-os.environ["DATABASE_URL"] = "postgresql+asyncpg://agenda360_app:agenda360_app@localhost:5432/agenda360_test"
-os.environ["ADMIN_DATABASE_URL"] = "postgresql+asyncpg://agenda360:agenda360@localhost:5432/agenda360_test"
+# engine no import, usando get_settings() (lru_cache). Lemos o que já está
+# no ambiente (definido pelo docker-compose ou pelo .env) como base.
+os.environ["DATABASE_URL"] = _with_test_db(
+    os.environ.get("DATABASE_URL", "postgresql+asyncpg://agenda360_app:agenda360_app@localhost:5432/agenda360")
+)
+os.environ["ADMIN_DATABASE_URL"] = _with_test_db(
+    os.environ.get("ADMIN_DATABASE_URL", "postgresql+asyncpg://agenda360:agenda360@localhost:5432/agenda360")
+)
 
 from datetime import time  # noqa: E402
 
@@ -56,8 +71,12 @@ async def _prepare_database():
     yield
 
 
-@pytest_asyncio.fixture(scope="session")
+@pytest_asyncio.fixture
 async def db_engine(_prepare_database):
+    # Escopo de função, não sessão: pytest-asyncio roda cada teste num
+    # event loop novo, e conexões asyncpg presas a um engine de sessão
+    # quebram ao serem reusadas de um loop diferente ("another operation
+    # is in progress" / "attached to a different loop").
     settings = get_settings()
     engine = create_async_engine(settings.admin_database_url)
     yield engine

@@ -1,21 +1,28 @@
 from datetime import datetime, timedelta, timezone
 from uuid import UUID
 
+import bcrypt
 from jose import JWTError, jwt
-from passlib.context import CryptContext
 
 from app.core.config import get_settings
 
 settings = get_settings()
-_pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
+
+# passlib (CryptContext) é incompatível com bcrypt>=4.1 (removeu o atributo
+# `__about__` que passlib usa para detectar a versão, e passou a levantar
+# ValueError em vez de truncar silenciosamente senhas > 72 bytes) — passlib
+# está sem manutenção desde 2020. Usamos o pacote bcrypt direto.
+_BCRYPT_MAX_BYTES = 72
 
 
 def hash_password(password: str) -> str:
-    return _pwd_context.hash(password)
+    truncated = password.encode("utf-8")[:_BCRYPT_MAX_BYTES]
+    return bcrypt.hashpw(truncated, bcrypt.gensalt()).decode("utf-8")
 
 
 def verify_password(password: str, password_hash: str) -> bool:
-    return _pwd_context.verify(password, password_hash)
+    truncated = password.encode("utf-8")[:_BCRYPT_MAX_BYTES]
+    return bcrypt.checkpw(truncated, password_hash.encode("utf-8"))
 
 
 def create_access_token(*, staff_user_id: UUID, tenant_id: UUID, role: str) -> str:

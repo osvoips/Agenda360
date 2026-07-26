@@ -90,7 +90,7 @@ async def create_appointment(
         raise HTTPException(status.HTTP_404_NOT_FOUND, "Profissional não encontrado")
 
     if payload.starts_at <= datetime.now(timezone.utc):
-        raise HTTPException(status.HTTP_422_UNPROCESSABLE_ENTITY, "Não é possível agendar no passado")
+        raise HTTPException(status.HTTP_422_UNPROCESSABLE_CONTENT, "Não é possível agendar no passado")
 
     available_slots = await get_available_slots(
         db,
