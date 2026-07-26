@@ -138,14 +138,14 @@ agenda360/
 
 ## Status
 
-**Fase 1 (MVP) completa no código**: backend (FastAPI), App Cliente
-(Flutter) e Painel da Barbearia/Administrador (Flutter) — os três
-pedaços previstos em `docs/ROADMAP.md` estão implementados, cobrindo
-todos os requisitos de `docs/REQUIREMENTS.md`. Nada disso foi executado
-de verdade ainda: este ambiente não tinha Docker nem SDK do Flutter
-disponíveis, então tudo foi escrito e revisado manualmente (imports,
-nomes de campo e assinaturas de método cruzados à mão entre os arquivos),
-sem `pytest`, `flutter analyze` ou `flutter run`. Antes de considerar a
-Fase 1 validada de verdade, alguém precisa rodar os três READMEs
-(`backend/`, `app_cliente/`, `app_admin/`) numa máquina com Docker e
-Flutter instalados.
+**Fase 1 (MVP) completa no código, backend validado de ponta a ponta.**
+Backend (FastAPI), App Cliente (Flutter) e Painel da Barbearia/
+Administrador (Flutter) — os três pedaços previstos em
+`docs/ROADMAP.md` — estão implementados, cobrindo todos os requisitos de
+`docs/REQUIREMENTS.md`. O backend já rodou de verdade (Docker, migrations,
+seed, todos os endpoints testados via curl, `pytest` 10/10 passando) —
+três bugs reais só apareceram nessa validação (ver
+`docs/ROADMAP.md`/histórico do git), todos corrigidos. Os dois apps
+Flutter ainda não rodaram (SDK do Flutter em instalação); depois de
+instalado, falta `flutter create` + `flutter pub get` + `flutter analyze`
+em `app_cliente/` e `app_admin/`.

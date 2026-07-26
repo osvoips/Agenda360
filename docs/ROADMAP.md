@@ -28,9 +28,12 @@ Objetivo: validar o produto em uso real com o cliente piloto.
 
 - [x] **Backend FastAPI** com autenticação por tenant e RLS no PostgreSQL
       — ver [`backend/`](../backend/README.md). Cobre RF-CLI-01 a 08,
-      RF-BAR-01 a 06 e RF-ADM-01 a 06. Testado apenas por `py_compile`
-      neste ambiente (sem Docker/Postgres disponíveis) — falta rodar de
-      verdade (`alembic upgrade head` + `pytest`) numa máquina com Docker.
+      RF-BAR-01 a 06 e RF-ADM-01 a 06. **Validado de ponta a ponta**
+      (migrations, seed, todos os endpoints via curl, `pytest` 10/10) —
+      três bugs reais só apareceram rodando contra Postgres de verdade
+      (passlib incompatível com bcrypt novo, host de teste fixo em
+      `localhost`, engine de teste preso a um event loop errado), todos
+      corrigidos.
 - [x] **App Cliente (Flutter)**: fluxo completo de agendamento sem
   cadastro, conforme `REQUIREMENTS.md` §1 — ver
   [`app_cliente/`](../app_cliente/README.md). Escrito e revisado à mão
