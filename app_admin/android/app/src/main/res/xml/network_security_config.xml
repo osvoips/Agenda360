@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  MVP roda contra um backend em texto plano (http://IP-da-rede-local:8000)
+  enquanto não existe deploy com domínio/HTTPS (ver docs/ROADMAP.md Fase 3).
+  Sem isso, o Android bloqueia toda a rede do app por padrão a partir da
+  API 28. Reavaliar quando o backend tiver um domínio HTTPS real.
+-->
+<network-security-config>
+    <base-config cleartextTrafficPermitted="true" />
+</network-security-config>
