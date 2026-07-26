@@ -131,12 +131,18 @@ agenda360/
   navegável do App Cliente, Painel da Barbearia e Painel Administrador
   (abrir no navegador)
 - [backend/README.md](backend/README.md) — como rodar a API localmente
+- [app_cliente/README.md](app_cliente/README.md) — como rodar o app do
+  cliente localmente
 
 ## Status
 
 Documentação técnica completa, banco de dados modelado, protótipos de
-tela prontos e **backend (FastAPI) do MVP implementado** — cobre os três
-atores do `REQUIREMENTS.md` (Cliente, Barbearia, Administrador). Falta
-rodar as migrations e os testes numa máquina com Docker (não disponível no
-ambiente onde o backend foi escrito) e começar os apps Flutter (cliente e
-painel admin), que vão consumir essa API.
+tela prontos, **backend (FastAPI) do MVP implementado** (Cliente,
+Barbearia, Administrador) e **App Cliente (Flutter) implementado**
+(fluxo completo de agendamento sem cadastro). Nenhum dos dois foi
+executado de verdade ainda — este ambiente não tinha Docker nem SDK do
+Flutter disponíveis, só revisão manual do código. Falta rodar
+migrations/testes do backend e `flutter create`/`flutter run` do app numa
+máquina com essas ferramentas, e começar o Painel da
+Barbearia/Administrador (Flutter), que consome os mesmos endpoints já
+prontos no backend.

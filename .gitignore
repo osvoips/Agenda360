@@ -7,3 +7,13 @@ backend/**/__pycache__/
 backend/*.egg-info/
 backend/.env
 backend/.pytest_cache/
+
+# apps Flutter (geradas pelo `flutter create` / `flutter pub get`)
+app_cliente/.dart_tool/
+app_cliente/.flutter-plugins
+app_cliente/.flutter-plugins-dependencies
+app_cliente/build/
+app_admin/.dart_tool/
+app_admin/.flutter-plugins
+app_admin/.flutter-plugins-dependencies
+app_admin/build/

@@ -31,8 +31,12 @@ Objetivo: validar o produto em uso real com o cliente piloto.
       RF-BAR-01 a 06 e RF-ADM-01 a 06. Testado apenas por `py_compile`
       neste ambiente (sem Docker/Postgres disponíveis) — falta rodar de
       verdade (`alembic upgrade head` + `pytest`) numa máquina com Docker.
-- [ ] App Cliente (Flutter): fluxo completo de agendamento sem cadastro,
-  conforme `REQUIREMENTS.md` §1.
+- [x] **App Cliente (Flutter)**: fluxo completo de agendamento sem
+  cadastro, conforme `REQUIREMENTS.md` §1 — ver
+  [`app_cliente/`](../app_cliente/README.md). Escrito e revisado à mão
+  (sem SDK do Flutter disponível neste ambiente) — falta gerar as pastas
+  nativas (`flutter create .`) e rodar `flutter analyze`/`flutter run`
+  numa máquina com o Flutter instalado.
 - [ ] Painel da Barbearia: agenda do dia/semana, confirmação/cancelamento,
   bloqueio de horários (endpoints prontos no backend, falta o app Flutter).
 - [ ] Painel Administrativo: cadastro de barbeiros, serviços, horários,
