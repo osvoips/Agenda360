@@ -37,10 +37,16 @@ Objetivo: validar o produto em uso real com o cliente piloto.
   (sem SDK do Flutter disponível neste ambiente) — falta gerar as pastas
   nativas (`flutter create .`) e rodar `flutter analyze`/`flutter run`
   numa máquina com o Flutter instalado.
-- [ ] Painel da Barbearia: agenda do dia/semana, confirmação/cancelamento,
-  bloqueio de horários (endpoints prontos no backend, falta o app Flutter).
-- [ ] Painel Administrativo: cadastro de barbeiros, serviços, horários,
-  promoções (idem — endpoints prontos, falta o app Flutter).
+- [x] **Painel da Barbearia/Administrador (Flutter)**: agenda do
+  dia/semana, confirmação/cancelamento, bloqueio de horários,
+  configuração de horário de funcionamento, e cadastro de
+  profissionais/serviços/promoções — um único app (`app_admin/`) para os
+  dois papéis, ver [`app_admin/README.md`](../app_admin/README.md).
+  Mesma ressalva do App Cliente: escrito e revisado à mão, falta
+  `flutter create`/`flutter analyze`/`flutter run` numa máquina com o
+  Flutter instalado. Um endpoint novo (`GET
+  /v1/barbershop/professionals`) foi adicionado ao backend durante esta
+  etapa para dar suporte ao bloqueio de horário.
 - White Label aplicado apenas ao tenant Carioca Barbearia (1 build).
 - Pagamento presencial (fora do app).
 - **Critério de saída:** Carioca Barbearia usando o app no dia a dia por

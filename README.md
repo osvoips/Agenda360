@@ -133,16 +133,19 @@ agenda360/
 - [backend/README.md](backend/README.md) — como rodar a API localmente
 - [app_cliente/README.md](app_cliente/README.md) — como rodar o app do
   cliente localmente
+- [app_admin/README.md](app_admin/README.md) — como rodar o painel da
+  barbearia/administrador localmente
 
 ## Status
 
-Documentação técnica completa, banco de dados modelado, protótipos de
-tela prontos, **backend (FastAPI) do MVP implementado** (Cliente,
-Barbearia, Administrador) e **App Cliente (Flutter) implementado**
-(fluxo completo de agendamento sem cadastro). Nenhum dos dois foi
-executado de verdade ainda — este ambiente não tinha Docker nem SDK do
-Flutter disponíveis, só revisão manual do código. Falta rodar
-migrations/testes do backend e `flutter create`/`flutter run` do app numa
-máquina com essas ferramentas, e começar o Painel da
-Barbearia/Administrador (Flutter), que consome os mesmos endpoints já
-prontos no backend.
+**Fase 1 (MVP) completa no código**: backend (FastAPI), App Cliente
+(Flutter) e Painel da Barbearia/Administrador (Flutter) — os três
+pedaços previstos em `docs/ROADMAP.md` estão implementados, cobrindo
+todos os requisitos de `docs/REQUIREMENTS.md`. Nada disso foi executado
+de verdade ainda: este ambiente não tinha Docker nem SDK do Flutter
+disponíveis, então tudo foi escrito e revisado manualmente (imports,
+nomes de campo e assinaturas de método cruzados à mão entre os arquivos),
+sem `pytest`, `flutter analyze` ou `flutter run`. Antes de considerar a
+Fase 1 validada de verdade, alguém precisa rodar os três READMEs
+(`backend/`, `app_cliente/`, `app_admin/`) numa máquina com Docker e
+Flutter instalados.

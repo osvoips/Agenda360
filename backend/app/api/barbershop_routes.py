@@ -10,13 +10,31 @@ from app.api.deps import CurrentStaff, get_current_staff, get_staff_db
 from app.models.appointment import Appointment
 from app.models.blocked_slot import BlockedSlot
 from app.models.business_hours import BusinessHours
+from app.models.professional import Professional
 from app.schemas.appointment import AgendaAppointmentOut, AppointmentOut, AppointmentStaffCancelRequest
 from app.schemas.blocked_slot import BlockedSlotCreate, BlockedSlotOut
 from app.schemas.business_hours import BusinessHoursItem, BusinessHoursUpdate
+from app.schemas.professional import ProfessionalOut
 from app.services.agenda import day_range, get_agenda_rows, serialize_agenda_rows, week_range
 
 router = APIRouter(prefix="/v1/barbershop", tags=["barbearia"])
 hours_router = APIRouter(prefix="/v1", tags=["barbearia", "administrador"])
+
+
+# Suporte a RF-BAR-05 (bloquear horário): staff precisa saber os IDs dos
+# profissionais para escolher quem está sendo bloqueado, mas não tem
+# acesso a /v1/admin/professionals (role=admin) nem faz sentido usar o
+# endpoint público /v1/professionals (exige service_id, que não existe
+# no contexto de um bloqueio).
+@router.get("/professionals", response_model=list[ProfessionalOut])
+async def list_professionals_for_staff(
+    staff: CurrentStaff = Depends(get_current_staff),
+    db: AsyncSession = Depends(get_staff_db),
+) -> list[Professional]:
+    result = await db.execute(
+        select(Professional).where(Professional.is_active.is_(True)).order_by(Professional.name)
+    )
+    return list(result.scalars().all())
 
 
 @router.get("/agenda/day", response_model=list[AgendaAppointmentOut])
