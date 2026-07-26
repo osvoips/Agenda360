@@ -11,8 +11,9 @@ Planejamento e documentação técnica antes de qualquer código.
 - [x] Definição de missão, modelo de negócio e público-alvo.
 - [x] Repositório oficial criado (`git init`, local).
 - [x] `README.md`, `ARCHITECTURE.md`, `REQUIREMENTS.md`, `ROADMAP.md`.
-- [ ] Modelagem do banco de dados (schema multi-tenant, entidades §4 de
-      ARCHITECTURE.md).
+- [x] Modelagem do banco de dados (schema multi-tenant, entidades §4 de
+      ARCHITECTURE.md) — ver [DATABASE.md](DATABASE.md) e
+      [`database/schema.sql`](../database/schema.sql).
 - [ ] Protótipos de tela (app cliente + painel admin).
 - [ ] Decisões técnicas restantes: verificação de telefone, resolução de
       tenant no Flutter (build flavor vs. runtime config).

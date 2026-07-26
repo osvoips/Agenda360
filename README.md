@@ -125,9 +125,11 @@ agenda360/
   funcionais do MVP
 - [docs/ROADMAP.md](docs/ROADMAP.md) — fases do produto, do MVP à expansão
   de segmentos e IA
+- [docs/DATABASE.md](docs/DATABASE.md) — modelagem do banco de dados
+  (entidades, relacionamentos, RLS) e [`database/schema.sql`](database/schema.sql)
 
 ## Status
 
 Documentação técnica inicial concluída (README, arquitetura, requisitos,
-roadmap). Ainda sem código de backend/apps — próximos passos: modelagem do
-banco de dados e protótipos de tela.
+roadmap) e modelagem do banco de dados definida. Ainda sem código de
+backend/apps — próximo passo: protótipos de tela.
