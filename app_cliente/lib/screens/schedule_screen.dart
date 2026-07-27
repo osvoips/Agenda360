@@ -57,6 +57,12 @@ class _ScheduleScreenState extends State<ScheduleScreen> {
     final days = List.generate(_daysAhead, (i) => today.add(Duration(days: i)))
         .map((d) => DateTime(d.year, d.month, d.day))
         .toList();
+    // Mostra o mês só no primeiro chip e sempre que ele mudar em relação
+    // ao anterior — evita ambiguidade tipo "dia 7" sem saber se é deste
+    // mês ou do próximo, sem poluir todos os 14 chips com o mês repetido.
+    final showMonthAt = <bool>[
+      for (var i = 0; i < days.length; i++) i == 0 || days[i].month != days[i - 1].month,
+    ];
 
     return Scaffold(
       appBar: AppBar(title: const Text('Escolha o horário')),
@@ -64,7 +70,7 @@ class _ScheduleScreenState extends State<ScheduleScreen> {
         child: Column(
           children: [
             SizedBox(
-              height: 76,
+              height: 84,
               child: ListView.separated(
                 scrollDirection: Axis.horizontal,
                 padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
@@ -75,6 +81,7 @@ class _ScheduleScreenState extends State<ScheduleScreen> {
                   return _DateChip(
                     date: day,
                     isSelected: day == _selectedDate,
+                    showMonth: showMonthAt[index],
                     onTap: () => _selectDate(day),
                   );
                 },
@@ -130,15 +137,22 @@ class _ScheduleScreenState extends State<ScheduleScreen> {
 }
 
 class _DateChip extends StatelessWidget {
-  const _DateChip({required this.date, required this.isSelected, required this.onTap});
+  const _DateChip({
+    required this.date,
+    required this.isSelected,
+    required this.showMonth,
+    required this.onTap,
+  });
 
   final DateTime date;
   final bool isSelected;
+  final bool showMonth;
   final VoidCallback onTap;
 
   @override
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
+    final monthColor = isSelected ? Colors.white70 : Theme.of(context).colorScheme.primary;
     return InkWell(
       onTap: onTap,
       borderRadius: BorderRadius.circular(12),
@@ -168,6 +182,19 @@ class _DateChip extends StatelessWidget {
                 fontSize: 15,
                 color: isSelected ? Colors.white : null,
               ),
+            ),
+            const SizedBox(height: 1),
+            // Só aparece no 1º chip e sempre que o mês mudar — evita
+            // ambiguidade tipo "dia 7" sem saber de qual mês, sem repetir
+            // o mês nos 14 chips.
+            SizedBox(
+              height: 11,
+              child: showMonth
+                  ? Text(
+                      DateFormat.MMM('pt_BR').format(date),
+                      style: TextStyle(fontSize: 9, fontWeight: FontWeight.w700, color: monthColor),
+                    )
+                  : null,
             ),
           ],
         ),
