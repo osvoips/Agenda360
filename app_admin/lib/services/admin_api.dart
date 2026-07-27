@@ -62,8 +62,11 @@ class AdminApi {
   }) {
     return _client.post('/v1/barbershop/blocked-slots', {
       'professional_id': professionalId,
-      'starts_at': startsAt.toIso8601String(),
-      'ends_at': endsAt.toIso8601String(),
+      // toUtc() garante offset explícito ('Z') — startsAt/endsAt aqui vêm
+      // de showDatePicker/showTimePicker (hora local do aparelho, sem
+      // offset), e sem isso o backend salvaria 3h adiantado/atrasado.
+      'starts_at': startsAt.toUtc().toIso8601String(),
+      'ends_at': endsAt.toUtc().toIso8601String(),
       'reason': reason,
     });
   }
@@ -181,8 +184,10 @@ class AdminApi {
       'name': name,
       'discount_type': discountType,
       'discount_value': discountValue,
-      'starts_at': startsAt.toIso8601String(),
-      'ends_at': endsAt.toIso8601String(),
+      // toUtc(): startsAt/endsAt vêm de showDatePicker (hora local, sem
+      // offset) — sem isso o backend interpretaria a data errada.
+      'starts_at': startsAt.toUtc().toIso8601String(),
+      'ends_at': endsAt.toUtc().toIso8601String(),
     }) as Map<String, dynamic>;
     return Promotion.fromJson(json);
   }
@@ -200,8 +205,8 @@ class AdminApi {
     if (name != null) body['name'] = name;
     if (discountType != null) body['discount_type'] = discountType;
     if (discountValue != null) body['discount_value'] = discountValue;
-    if (startsAt != null) body['starts_at'] = startsAt.toIso8601String();
-    if (endsAt != null) body['ends_at'] = endsAt.toIso8601String();
+    if (startsAt != null) body['starts_at'] = startsAt.toUtc().toIso8601String();
+    if (endsAt != null) body['ends_at'] = endsAt.toUtc().toIso8601String();
     if (isActive != null) body['is_active'] = isActive;
     final json = await _client.put('/v1/admin/promotions/$id', body) as Map<String, dynamic>;
     return Promotion.fromJson(json);

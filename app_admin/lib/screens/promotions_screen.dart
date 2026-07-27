@@ -73,8 +73,8 @@ class _PromotionsScreenState extends State<PromotionsScreen> {
                 child: ListTile(
                   title: Text(promotion.name),
                   subtitle: Text(
-                    '$discountLabel · ${DateFormat('d MMM', 'pt_BR').format(promotion.startsAt)} a '
-                    '${DateFormat('d MMM', 'pt_BR').format(promotion.endsAt)}$statusLabel',
+                    '$discountLabel · ${DateFormat('d MMM', 'pt_BR').format(promotion.startsAt.toLocal())} a '
+                    '${DateFormat('d MMM', 'pt_BR').format(promotion.endsAt.toLocal())}$statusLabel',
                   ),
                   trailing: const Icon(Icons.chevron_right),
                   onTap: () => _openDialog(existing: promotion),
@@ -264,13 +264,13 @@ class _PromotionDialogState extends State<_PromotionDialog> {
             ListTile(
               contentPadding: EdgeInsets.zero,
               title: const Text('De'),
-              trailing: Text(DateFormat("d 'de' MMM", 'pt_BR').format(_startsAt)),
+              trailing: Text(DateFormat("d 'de' MMM", 'pt_BR').format(_startsAt.toLocal())),
               onTap: () => _pickDate(isStart: true),
             ),
             ListTile(
               contentPadding: EdgeInsets.zero,
               title: const Text('Até'),
-              trailing: Text(DateFormat("d 'de' MMM", 'pt_BR').format(_endsAt)),
+              trailing: Text(DateFormat("d 'de' MMM", 'pt_BR').format(_endsAt.toLocal())),
               onTap: () => _pickDate(isStart: false),
             ),
             if (_isEditing) ...[

@@ -42,7 +42,7 @@ class SuccessScreen extends StatelessWidget {
               const SizedBox(height: 8),
               Text(
                 '${service.name} com ${professional.name}\n'
-                '${DateFormat("EEEE, d 'de' MMM 'às' HH:mm", 'pt_BR').format(appointment.startsAt)}',
+                '${DateFormat("EEEE, d 'de' MMM 'às' HH:mm", 'pt_BR').format(appointment.startsAt.toLocal())}',
                 textAlign: TextAlign.center,
                 style: Theme.of(context).textTheme.bodyMedium,
               ),

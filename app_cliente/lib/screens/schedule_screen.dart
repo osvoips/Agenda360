@@ -110,7 +110,12 @@ class _ScheduleScreenState extends State<ScheduleScreen> {
                       final slot = slots[index];
                       return OutlinedButton(
                         onPressed: () => _selectSlot(slot),
-                        child: Text(DateFormat.Hm('pt_BR').format(slot)),
+                        // toLocal(): a API manda offset explícito e o Dart
+                        // normaliza pra UTC ao dar parse — sem isso mostra
+                        // a hora errada. O valor enviado pra API em
+                        // _selectSlot continua o original (UTC), só a
+                        // exibição precisa ser local.
+                        child: Text(DateFormat.Hm('pt_BR').format(slot.toLocal())),
                       );
                     },
                   );

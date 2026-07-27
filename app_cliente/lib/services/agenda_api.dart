@@ -52,7 +52,11 @@ class AgendaApi {
       'client_phone': clientPhone,
       'service_id': serviceId,
       'professional_id': professionalId,
-      'starts_at': startsAt.toIso8601String(),
+      // toUtc() garante um offset explícito ('Z') na string enviada,
+      // não importa se startsAt já veio em UTC (normal, vindo da
+      // disponibilidade) ou foi convertido pra local em algum ponto —
+      // sem isso o backend pode interpretar a hora errada.
+      'starts_at': startsAt.toUtc().toIso8601String(),
     }) as Map<String, dynamic>;
     return Appointment.fromJson(json);
   }

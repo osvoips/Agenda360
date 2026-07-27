@@ -62,7 +62,10 @@ class _MyAppointmentsScreenState extends State<MyAppointmentsScreen> {
   }
 
   String _formatWhen(DateTime dateTime) {
-    return DateFormat("EEE, d 'de' MMM 'às' HH:mm", 'pt_BR').format(dateTime);
+    // dateTime vem com offset explícito da API/armazenamento local — sem
+    // toLocal() mostraria o horário errado (Dart normaliza pra UTC ao
+    // fazer parse de uma string com offset).
+    return DateFormat("EEE, d 'de' MMM 'às' HH:mm", 'pt_BR').format(dateTime.toLocal());
   }
 
   @override

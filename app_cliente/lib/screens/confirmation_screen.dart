@@ -79,6 +79,12 @@ class _ConfirmationScreenState extends State<ConfirmationScreen> {
     final professional = booking.selectedProfessional!;
     final slot = booking.selectedSlot!;
     final endsAt = slot.add(Duration(minutes: service.durationMinutes));
+    // A API manda horário com offset explícito (ex.: -03:00), e o Dart
+    // normaliza isso pra UTC internamente — sem converter de volta pra
+    // local antes de formatar, a tela mostraria a hora errada (+3h no
+    // horário de Brasília).
+    final localSlot = slot.toLocal();
+    final localEndsAt = endsAt.toLocal();
 
     return Scaffold(
       appBar: AppBar(title: const Text('Confirme e agende')),
@@ -97,12 +103,12 @@ class _ConfirmationScreenState extends State<ConfirmationScreen> {
                       _SummaryRow(label: 'Profissional', value: professional.name),
                       _SummaryRow(
                         label: 'Data',
-                        value: DateFormat("EEE, d 'de' MMM", 'pt_BR').format(slot),
+                        value: DateFormat("EEE, d 'de' MMM", 'pt_BR').format(localSlot),
                       ),
                       _SummaryRow(
                         label: 'Horário',
                         value:
-                            '${DateFormat.Hm('pt_BR').format(slot)} – ${DateFormat.Hm('pt_BR').format(endsAt)}',
+                            '${DateFormat.Hm('pt_BR').format(localSlot)} – ${DateFormat.Hm('pt_BR').format(localEndsAt)}',
                       ),
                     ],
                   ),

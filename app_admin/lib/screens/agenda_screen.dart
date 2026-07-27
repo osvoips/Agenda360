@@ -311,7 +311,9 @@ class _AppointmentCardState extends State<_AppointmentCard> {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Text(
-                  DateFormat.Hm('pt_BR').format(appointment.startsAt),
+                  // toLocal(): a API manda offset explícito e o Dart
+                  // normaliza pra UTC ao dar parse.
+                  DateFormat.Hm('pt_BR').format(appointment.startsAt.toLocal()),
                   style: const TextStyle(fontWeight: FontWeight.w800, fontSize: 16),
                 ),
                 StatusBadge(status: appointment.status),
@@ -397,11 +399,12 @@ class _WeekView extends StatelessWidget {
 
               final byDay = <DateTime, List<AgendaAppointment>>{};
               for (final appointment in appointments) {
-                final day = DateTime(
-                  appointment.startsAt.year,
-                  appointment.startsAt.month,
-                  appointment.startsAt.day,
-                );
+                // Agrupa pelo dia local, não pelo dia UTC (a API manda
+                // offset explícito e o Dart normaliza pra UTC ao dar
+                // parse — perto da meia-noite isso pode cair no dia
+                // errado se usarmos os campos direto sem toLocal()).
+                final localStart = appointment.startsAt.toLocal();
+                final day = DateTime(localStart.year, localStart.month, localStart.day);
                 byDay.putIfAbsent(day, () => []).add(appointment);
               }
               final days = byDay.keys.toList()..sort();
@@ -423,7 +426,7 @@ class _WeekView extends StatelessWidget {
                         child: Card(
                           child: ListTile(
                             leading: Text(
-                              DateFormat.Hm('pt_BR').format(appointment.startsAt),
+                              DateFormat.Hm('pt_BR').format(appointment.startsAt.toLocal()),
                               style: const TextStyle(fontWeight: FontWeight.w800),
                             ),
                             title: Text(appointment.clientName),
