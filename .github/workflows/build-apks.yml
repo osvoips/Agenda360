@@ -1,8 +1,3 @@
-# 1. Crie a pasta .github/workflows (se não existir)
-mkdir -p .github/workflows
-
-# 2. Crie o arquivo com o workflow
-cat > .github/workflows/build-apks.yml << 'EOF'
 name: Build and Release APKs
 
 on:
@@ -41,17 +36,15 @@ jobs:
       - name: Prepare APK files
         run: |
           mkdir -p apk_output
-          cp app_cliente/build/app/outputs/flutter-app.apk apk_output/agenda360-cliente-v0.1.0.apk
-          cp app_admin/build/app/outputs/flutter-app.apk apk_output/agenda360-admin-v0.1.0.apk
+          cp app_cliente/build/app/outputs/flutter-apk/app-release.apk apk_output/agenda360-cliente-v0.1.0.apk
+          cp app_admin/build/app/outputs/flutter-apk/app-release.apk apk_output/agenda360-admin-v0.1.0.apk
       
       - name: Create Release
         id: create_release
-        uses: actions/create-release@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        uses: softprops/action-gh-release@v1
         with:
           tag_name: v0.1.0-test-${{ github.run_number }}
-          release_name: APK Build v0.1.0 (Test Build)
+          name: APK Build v0.1.0 (Test Build)
           body: |
             ## 📱 APK Testing Release
             
@@ -66,35 +59,10 @@ jobs:
             
             **Versão**: 0.1.0
             **Commit**: ${{ github.sha }}
-          draft: false
+          files: |
+            apk_output/agenda360-cliente-v0.1.0.apk
+            apk_output/agenda360-admin-v0.1.0.apk
           prerelease: true
-      
-      - name: Upload Cliente APK
-        uses: actions/upload-release-asset@v1
+          draft: false
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: ./apk_output/agenda360-cliente-v0.1.0.apk
-          asset_name: agenda360-cliente-v0.1.0.apk
-          asset_content_type: application/vnd.android.package-archive
-      
-      - name: Upload Admin APK
-        uses: actions/upload-release-asset@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: ./apk_output/agenda360-admin-v0.1.0.apk
-          asset_name: agenda360-admin-v0.1.0.apk
-          asset_content_type: application/vnd.android.package-archive
-EOF
-
-# 3. Adicione ao Git
-git add .github/workflows/build-apks.yml
-
-# 4. Faça commit
-git commit -m "chore: Add GitHub Actions workflow for automated APK builds"
-
-# 5. Faça push para main
-git push origin main
