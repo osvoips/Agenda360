@@ -1,65 +1,65 @@
 name: Build and Release APKs
 on:
-  push:
-    branches: [ main ]
-  workflow_dispatch:
+ push:
+ branches: [ main ]
+ workflow_dispatch:
 jobs:
-  build-apks:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      
-      - name: Setup Flutter
-        uses: subosito/flutter-action@v2
-        with:
-          flutter-version: '3.24.x'
-          channel: 'stable'
-      
-      - name: Get Flutter dependencies
-        run: |
-          flutter pub get
-          cd app_cliente && flutter pub get
-          cd ../app_admin && flutter pub get
-      
-      - name: Build Cliente APK
-        run: |
-          cd app_cliente
-          flutter build apk --release
-      
-      - name: Build Admin APK
-        run: |
-          cd app_admin
-          flutter build apk --release
-      
-      - name: Prepare APK files
-        run: |
-          mkdir -p apk_output
-          cp app_cliente/build/app/outputs/flutter-apk/app-release.apk apk_output/agenda360-cliente-v0.1.0.apk
-          cp app_admin/build/app/outputs/flutter-apk/app-release.apk apk_output/agenda360-admin-v0.1.0.apk
-      
-      - name: Create Release
-        id: create_release
-        uses: softprops/action-gh-release@v1
-        with:
-          tag_name: v0.1.0-test-${{ github.run_number }}
-          name: APK Build v0.1.0 (Test Build)
-          body: |
-            ## 📱 APK Testing Release
-            
-            **Apps inclusos:**
-            - ✅ Cliente APK (app_cliente)
-            - ✅ Admin APK (app_admin)
-            
-            **Instruções de instalação:**
-            1. Faça download dos APKs abaixo
-            2. Ative "Instalação de fontes desconhecidas" no celular
-            3. Instale o APK
-            
-            **Versão**: 0.1.0
-          files: |
-            apk_output/agenda360-cliente-v0.1.0.apk
-            apk_output/agenda360-admin-v0.1.0.apk
-          prerelease: true
-          draft: false
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+ build-apks:
+ runs-on: ubuntu-latest
+ steps:
+ - uses: actions/checkout@v4
+ 
+ - name: Setup Flutter
+ uses: subosito/flutter-action@v2
+ with:
+ flutter-version: '3.24.x'
+ channel: 'stable'
+ 
+ - name: Get Flutter dependencies
+ run: |
+ flutter pub get
+ cd app_cliente && flutter pub get
+ cd ../app_admin && flutter pub get
+ 
+ - name: Build Cliente APK
+ run: |
+ cd app_cliente
+ flutter build apk --release
+ 
+ - name: Build Admin APK
+ run: |
+ cd app_admin
+ flutter build apk --release
+ 
+ - name: Prepare APK files
+ run: |
+ mkdir -p apk_output
+ cp app_cliente/build/app/outputs/flutter-apk/app-release.apk apk_output/agenda360-cliente-v0.1.0.apk
+ cp app_admin/build/app/outputs/flutter-apk/app-release.apk apk_output/agenda360-admin-v0.1.0.apk
+ 
+ - name: Create Release
+ id: create_release
+ uses: softprops/action-gh-release@v1
+ with:
+ tag_name: v0.1.0-test-${{ github.run_number }}
+ name: APK Build v0.1.0 (Test Build)
+ body: |
+ ## 📱 APK Testing Release
+ 
+ **Apps inclusos:**
+ - ✅ Cliente APK (app_cliente)
+ - ✅ Admin APK (app_admin)
+ 
+ **Instruções de instalação:**
+ 1. Faça download dos APKs abaixo
+ 2. Ative "Instalação de fontes desconhecidas" no celular
+ 3. Instale o APK
+ 
+ **Versão**: 0.1.0
+ files: |
+ apk_output/agenda360-cliente-v0.1.0.apk
+ apk_output/agenda360-admin-v0.1.0.apk
+ prerelease: true
+ draft: false
+ env:
+ GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
