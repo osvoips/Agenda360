@@ -10,6 +10,9 @@ class Settings(BaseSettings):
     database_url: str = "postgresql+asyncpg://agenda360_app:agenda360_app@localhost:5432/agenda360"
     # Role dona do schema — só para migrations e seed, nunca para servir requisições.
     admin_database_url: str = "postgresql+asyncpg://agenda360:agenda360@localhost:5432/agenda360"
+    # Senha da role agenda360_app, aplicada pela migration 0001 (CREATE/ALTER ROLE).
+    # Só usada em migration time — a senha real de conexão vem embutida em database_url.
+    app_db_password: str = "agenda360_app"
     jwt_secret: str = "change-me-in-production"
     jwt_algorithm: str = "HS256"
     jwt_expire_minutes: int = 480

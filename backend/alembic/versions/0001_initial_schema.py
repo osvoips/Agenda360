@@ -12,12 +12,20 @@ from typing import Sequence, Union
 
 from alembic import op
 
+from app.core.config import get_settings
+
 revision: str = "0001"
 down_revision: Union[str, None] = None
 branch_labels: Union[str, Sequence[str], None] = None
 depends_on: Union[str, Sequence[str], None] = None
 
-UPGRADE_SQL = """
+# Senha vem de APP_DB_PASSWORD (settings.app_db_password) em vez de fixa no
+# código — em produção (Railway) é gerada/forte; em dev cai no default
+# 'agenda360_app' que bate com o .env.example. Escapa aspas simples pra
+# evitar quebrar o literal SQL caso a senha gerada contenha uma.
+_APP_DB_PASSWORD = get_settings().app_db_password.replace("'", "''")
+
+UPGRADE_SQL = f"""
 CREATE EXTENSION IF NOT EXISTS "pgcrypto";
 CREATE EXTENSION IF NOT EXISTS "btree_gist";
 
@@ -208,7 +216,9 @@ CREATE POLICY tenant_isolation ON promotions
 DO $do$
 BEGIN
     IF NOT EXISTS (SELECT FROM pg_catalog.pg_roles WHERE rolname = 'agenda360_app') THEN
-        CREATE ROLE agenda360_app LOGIN PASSWORD 'agenda360_app';
+        CREATE ROLE agenda360_app LOGIN PASSWORD '{_APP_DB_PASSWORD}';
+    ELSE
+        ALTER ROLE agenda360_app WITH PASSWORD '{_APP_DB_PASSWORD}';
     END IF;
 END
 $do$;

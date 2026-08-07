@@ -18,6 +18,11 @@ services:
   api:
     build:
       context: ../backend
+    # --reload é só pra dev local — a imagem de produção (usada no Railway)
+    # sobe sem reload via docker-entrypoint.sh (ver backend/Dockerfile).
+    entrypoint: ["sh", "-c"]
+    command:
+      - "alembic upgrade head && exec uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload"
     environment:
       DATABASE_URL: postgresql+asyncpg://agenda360_app:agenda360_app@db:5432/agenda360
       ADMIN_DATABASE_URL: postgresql+asyncpg://agenda360:agenda360@db:5432/agenda360

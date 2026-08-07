@@ -53,9 +53,9 @@ API FastAPI multi-tenant do Agenda360. Ver
    em `POST /v1/auth/login`.
 
 Alternativa: `docker compose -f ../docker/docker-compose.yml up --build`
-sobe banco + API juntos (rode os passos 4 e 5 manualmente dentro do
-container `api` na primeira vez: `docker compose exec api alembic upgrade
-head` e `docker compose exec api python -m app.seed`).
+sobe banco + API juntos e já roda as migrations sozinho ao iniciar; só falta
+popular o tenant piloto na primeira vez: `docker compose exec api python -m
+app.seed`.
 
 ## Testes
 

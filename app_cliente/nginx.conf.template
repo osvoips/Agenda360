@@ -1,0 +1,15 @@
+server {
+    listen ${PORT};
+    server_name _;
+    root /usr/share/nginx/html;
+    index index.html;
+
+    location / {
+        try_files $uri $uri/ /index.html;
+    }
+
+    location ~* \.(?:css|js|map|woff2?|ttf|otf|ico|png|jpg|jpeg|gif|svg)$ {
+        expires 30d;
+        access_log off;
+    }
+}
