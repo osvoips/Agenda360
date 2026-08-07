@@ -1,5 +1,4 @@
 name: Build and Release APKs
-
 on:
   push:
     branches: [ main ]
@@ -54,11 +53,10 @@ jobs:
             
             **Instruções de instalação:**
             1. Faça download dos APKs abaixo
-            2. Ative "Instalação de fontes desconhecidas" no celular (Configurações > Segurança)
+            2. Ative "Instalação de fontes desconhecidas" no celular
             3. Instale o APK
             
             **Versão**: 0.1.0
-            **Commit**: ${{ github.sha }}
           files: |
             apk_output/agenda360-cliente-v0.1.0.apk
             apk_output/agenda360-admin-v0.1.0.apk
