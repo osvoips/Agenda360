@@ -7,6 +7,9 @@ on:
 env:
   AGENDA360_API_BASE_URL: https://backend-production-b5c32.up.railway.app
 
+permissions:
+  contents: write
+
 jobs:
   build-apks:
     runs-on: ubuntu-latest
